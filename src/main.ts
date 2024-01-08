@@ -64,7 +64,9 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {
-        const result = errors.map((error) => error.constraints[Object.keys(error.constraints)[0]]);
+        const result = errors.map(
+          (error) => error.constraints[Object.keys(error.constraints)[0]],
+        );
         const messageJoined = result.join(', ');
         return new BadRequestException(messageJoined);
       },
@@ -73,7 +75,11 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
-  const config = new DocumentBuilder().setTitle('Task Management API').setVersion('1.0.0').addBearerAuth().build();
+  const config = new DocumentBuilder()
+    .setTitle('Task Management API')
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
     swaggerOptions: {

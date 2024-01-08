@@ -1,7 +1,6 @@
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { BasedEntity } from '~/common/based.entity';
 import { ProfileEntity } from '~/modules/profile/entities/profile.entity';
-import { TaskEntity } from '~/modules/task/entities/task.entity';
 
 @Entity({ name: 'accounts' })
 export class AccountEntity extends BasedEntity {
@@ -13,7 +12,4 @@ export class AccountEntity extends BasedEntity {
 
   @OneToOne(() => ProfileEntity, ({ account }) => account)
   profile: ProfileEntity;
-
-  @OneToMany(() => TaskEntity, ({ createdBy }) => createdBy)
-  tasks: TaskEntity[];
 }

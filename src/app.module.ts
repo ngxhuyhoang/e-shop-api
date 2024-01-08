@@ -7,13 +7,13 @@ import { TypeOrmConfigService } from '~/databases/type-orm-config.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { AccountModule } from './modules/account/account.module';
 import { ProfileModule } from './modules/profile/profile.module';
-import { TaskModule } from './modules/task/task.module';
+import { ProductModule } from './modules/product/product.module';
 
 @Module({
   imports: [
     CacheModule.register({
       isGlobal: true,
-      ttl: 1000 * 60 * 60 * 24, // 1 day
+      ttl: 1000 * 60, // 1 day
     }),
     DevtoolsModule.register({
       http: process.env.NODE_ENV !== 'production',
@@ -31,7 +31,7 @@ import { TaskModule } from './modules/task/task.module';
     AuthModule,
     AccountModule,
     ProfileModule,
-    TaskModule,
+    ProductModule,
   ],
 })
 export class AppModule {}

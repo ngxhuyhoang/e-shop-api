@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,7 +13,6 @@ import { AccountDto } from '~/modules/account/dto/account.dto';
 import { AccountEntity } from '~/modules/account/entities/account.entity';
 import { ProfileEntity } from '~/modules/profile/entities/profile.entity';
 import { ProfileRepository } from '~/modules/profile/profile.repository';
-import { FirebaseAdminService } from '~/services/firebase.service';
 import { ProfileDto } from '../profile/dto/profile.dto';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
@@ -27,44 +30,36 @@ export class AuthService {
     private readonly _accountRepository: Repository<AccountEntity>,
 
     private readonly _configService: ConfigService,
-
-    private readonly _firebaseAdminService: FirebaseAdminService,
   ) {}
 
   async login(loginRequestDto: LoginRequestDto): Promise<LoginResponseDto> {
     try {
-      const result: DecodedIdToken = await this._firebaseAdminService.verifyToken(loginRequestDto.firebaseToken);
-      if (!result) {
-        throw new UnauthorizedException('Invalid firebase token');
-      }
       const existedAccount = await this._accountRepository.findOne({
-        where: { email: result.email },
+        where: { email: loginRequestDto.email },
         relations: ['profile'],
       });
-      if (!existedAccount) {
-        const { account, refreshToken } = await this._register(result);
-        const accessToken: string = await this._accessToken(result.email, account.profile.id, account.id);
-        return {
-          accessToken,
-          refreshToken,
-          account: new AccountDto(account),
-          profile: new ProfileDto(account.profile),
-        };
-      } else {
-        const refreshToken = await this._generateRefreshToken(result.email);
-        await this._accountRepository.update(existedAccount.id, { refreshToken });
-        const accessToken: string = await this._accessToken(result.email, existedAccount.profile.id, existedAccount.id);
-        const account = await this._accountRepository.findOne({
-          where: { email: result.email },
-          relations: ['profile'],
-        });
-        return {
-          accessToken,
-          refreshToken,
-          account: new AccountDto(account),
-          profile: new ProfileDto(account.profile),
-        };
-      }
+
+      const refreshToken = await this._generateRefreshToken(
+        loginRequestDto.email,
+      );
+      await this._accountRepository.update(existedAccount.id, {
+        refreshToken,
+      });
+      const accessToken: string = await this._accessToken(
+        loginRequestDto.email,
+        existedAccount.profile.id,
+        existedAccount.id,
+      );
+      const account = await this._accountRepository.findOne({
+        where: { email: loginRequestDto.email },
+        relations: ['profile'],
+      });
+      return {
+        accessToken,
+        refreshToken,
+        account: new AccountDto(account),
+        profile: new ProfileDto(account.profile),
+      };
     } catch (error) {
       throw error;
     }
@@ -72,20 +67,24 @@ export class AuthService {
 
   private async _register(firebaseUser: DecodedIdToken) {
     try {
-      const accountCreatedWithoutRefreshToken = await this._accountRepository.save({
-        email: firebaseUser.email,
-        isVerified: !!firebaseUser.email_verified,
-        refreshToken: '',
-      });
+      const accountCreatedWithoutRefreshToken =
+        await this._accountRepository.save({
+          email: firebaseUser.email,
+          isVerified: !!firebaseUser.email_verified,
+          refreshToken: '',
+        });
       await this._profileRepository.save({
         displayName: firebaseUser.name,
         avatar: firebaseUser.picture,
         account: { id: accountCreatedWithoutRefreshToken.id },
       });
       const refreshToken = await this._generateRefreshToken(firebaseUser.email);
-      await this._accountRepository.update(accountCreatedWithoutRefreshToken.id, {
-        refreshToken: refreshToken,
-      });
+      await this._accountRepository.update(
+        accountCreatedWithoutRefreshToken.id,
+        {
+          refreshToken: refreshToken,
+        },
+      );
       const accountCreated = await this._accountRepository.findOne({
         where: { id: accountCreatedWithoutRefreshToken.id },
         relations: ['profile'],
@@ -108,7 +107,9 @@ export class AuthService {
 
   async logout(authUser: JwtClaimDto) {
     try {
-      await this._accountRepository.update(authUser.accountId, { refreshToken: '' });
+      await this._accountRepository.update(authUser.accountId, {
+        refreshToken: '',
+      });
       return 'success';
     } catch (error) {
       throw error;
@@ -117,9 +118,12 @@ export class AuthService {
 
   async refreshToken(refreshTokenRequestDto: RefreshTokenRequestDto) {
     try {
-      const isValid = await this._jwtService.verifyAsync(refreshTokenRequestDto.refreshToken, {
-        secret: this._configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-      });
+      const isValid = await this._jwtService.verifyAsync(
+        refreshTokenRequestDto.refreshToken,
+        {
+          secret: this._configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+        },
+      );
       if (!isValid) {
         throw new UnauthorizedException('Invalid refresh token');
       }
@@ -128,16 +132,26 @@ export class AuthService {
         relations: ['profile'],
       });
       if (!existedAccount) {
-        throw new BadRequestException('User not found: ' + refreshTokenRequestDto.refreshToken);
+        throw new BadRequestException(
+          'User not found: ' + refreshTokenRequestDto.refreshToken,
+        );
       }
-      const accessToken = await this._accessToken(existedAccount.email, existedAccount.profile.id, existedAccount.id);
+      const accessToken = await this._accessToken(
+        existedAccount.email,
+        existedAccount.profile.id,
+        existedAccount.id,
+      );
       return { accessToken: accessToken };
     } catch (error) {
       throw new UnauthorizedException();
     }
   }
 
-  private async _accessToken(email: string, profileId: string, accountId: string) {
+  private async _accessToken(
+    email: string,
+    profileId: string,
+    accountId: string,
+  ) {
     try {
       const accessToken: string = await this._jwtService.signAsync({
         accountId,
@@ -159,7 +173,9 @@ export class AuthService {
         },
         {
           secret: this._configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this._configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'),
+          expiresIn: this._configService.get<string>(
+            'JWT_REFRESH_TOKEN_EXPIRES_IN',
+          ),
         },
       );
 

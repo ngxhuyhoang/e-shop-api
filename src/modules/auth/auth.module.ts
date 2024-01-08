@@ -9,7 +9,6 @@ import { AccountModule } from '~/modules/account/account.module';
 import { AccountEntity } from '~/modules/account/entities/account.entity';
 import { ProfileEntity } from '~/modules/profile/entities/profile.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { FirebaseAdminService } from '~/services/firebase.service';
 
 @Module({
   imports: [
@@ -28,6 +27,6 @@ import { FirebaseAdminService } from '~/services/firebase.service';
     TypeOrmModule.forFeature([AccountEntity, ProfileEntity]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, FirebaseAdminService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

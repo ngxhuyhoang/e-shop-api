@@ -1,9 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class LoginRequestDto {
   @ApiProperty()
-  @IsString()
+  @IsEmail()
   @IsNotEmpty()
-  firebaseToken: string;
+  email: string;
+
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  password: string;
 }

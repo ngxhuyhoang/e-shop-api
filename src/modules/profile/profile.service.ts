@@ -22,7 +22,10 @@ export class UserService {
       if (!user) {
         throw new BadRequestException('User not found');
       }
-      await this._profileRepository.update(authUser.profileId, updateProfileDto);
+      await this._profileRepository.update(
+        authUser.profileId,
+        updateProfileDto,
+      );
       return new ProfileDto(user);
     } catch (error) {
       throw error;
