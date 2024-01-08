@@ -3,10 +3,6 @@ import { IsDateString, IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class RegisterRequestDto {
   @ApiProperty()
-  @IsString()
-  username: string;
-
-  @ApiProperty()
   @IsEmail()
   email: string;
 
