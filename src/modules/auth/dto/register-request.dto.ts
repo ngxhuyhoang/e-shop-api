@@ -2,23 +2,23 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class RegisterRequestDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'hoang@test.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '123456' })
   @IsString()
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '123456' })
   @IsString()
   confirmPassword: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Hoang' })
   @IsString()
   firstName: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Nguyen' })
   @IsString()
   lastName: string;
 

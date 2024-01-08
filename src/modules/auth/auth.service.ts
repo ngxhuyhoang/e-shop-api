@@ -67,6 +67,14 @@ export class AuthService {
 
   public async register(registerRequestDto: RegisterRequestDto) {
     try {
+      const existedAccount = await this._accountRepository.findOne({
+        where: { email: registerRequestDto.email },
+      });
+      if (existedAccount) {
+        throw new BadRequestException(
+          'Email existed: ' + registerRequestDto.email,
+        );
+      }
       const accountCreatedWithoutRefreshToken =
         await this._accountRepository.save({
           email: registerRequestDto.email,
