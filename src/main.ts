@@ -76,7 +76,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
   const config = new DocumentBuilder()
-    .setTitle('Task Management API')
+    .setTitle('EShop API')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
