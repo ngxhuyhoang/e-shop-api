@@ -8,6 +8,7 @@ import { Public } from '~/decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { RefreshTokenRequestDto } from './dto/refresh-token-request.dto';
+import { RegisterRequestDto } from './dto/register-request.dto';
 
 @Controller({ path: 'auth', version: apiVersion })
 @ApiTags('Xác thực người dùng')
@@ -30,5 +31,11 @@ export class AuthController {
   @Auth()
   async logout(@AuthUser() authUser: JwtClaimDto) {
     return await this._authService.logout(authUser);
+  }
+
+  @Post('register')
+  @Public()
+  async register(@Body() registerRequestDto: RegisterRequestDto) {
+    return await this._authService.register(registerRequestDto);
   }
 }

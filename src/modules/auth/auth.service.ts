@@ -6,7 +6,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { Repository } from 'typeorm';
 import { JwtClaimDto } from '~/common/jwt-claim.dto';
 import { AccountDto } from '~/modules/account/dto/account.dto';
@@ -17,6 +16,7 @@ import { ProfileDto } from '../profile/dto/profile.dto';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RefreshTokenRequestDto } from './dto/refresh-token-request.dto';
+import { RegisterRequestDto } from './dto/register-request.dto';
 
 @Injectable()
 export class AuthService {
@@ -65,20 +65,23 @@ export class AuthService {
     }
   }
 
-  private async _register(firebaseUser: DecodedIdToken) {
+  public async register(registerRequestDto: RegisterRequestDto) {
     try {
       const accountCreatedWithoutRefreshToken =
         await this._accountRepository.save({
-          email: firebaseUser.email,
-          isVerified: !!firebaseUser.email_verified,
+          email: registerRequestDto.email,
+          isVerified: !!registerRequestDto.email,
           refreshToken: '',
         });
       await this._profileRepository.save({
-        displayName: firebaseUser.name,
-        avatar: firebaseUser.picture,
+        displayName:
+          registerRequestDto.firstName + ' ' + registerRequestDto.lastName,
+        avatar: '',
         account: { id: accountCreatedWithoutRefreshToken.id },
       });
-      const refreshToken = await this._generateRefreshToken(firebaseUser.email);
+      const refreshToken = await this._generateRefreshToken(
+        registerRequestDto.email,
+      );
       await this._accountRepository.update(
         accountCreatedWithoutRefreshToken.id,
         {
