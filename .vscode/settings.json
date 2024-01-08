@@ -1,0 +1,11 @@
+{
+  "editor.tabSize": 2,
+  "files.exclude": {
+    // "**/dist/**": true,
+    "**/node_modules/**": true,
+    "**/.gitkeep/**": true
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///Users/hoangnh0099/Code/task-manage-api/.github/workflows/deploy.yaml"
+  }
+}

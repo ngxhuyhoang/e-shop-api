@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # MySQL
+  database:
+    container_name: eshop-database
+    image: mysql:8
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    environment:
+      - MYSQL_USER=hoang
+      - MYSQL_PASSWORD=12345678
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=eshop_database
+    ports:
+      - 3306:3306
+    volumes:
+      - eshop-volume:/var/lib/mysql
+    networks:
+      - eshop-network
+
+networks:
+  eshop-network:
+    driver: bridge
+
+volumes:
+  eshop-volume:
