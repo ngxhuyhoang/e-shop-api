@@ -14,7 +14,7 @@ services:
     depends_on:
       - database
     ports:
-      - 4201:4201
+      - 5201:5201
     networks:
       - eshop-network
 
