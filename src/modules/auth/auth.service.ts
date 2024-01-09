@@ -17,6 +17,7 @@ import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RefreshTokenRequestDto } from './dto/refresh-token-request.dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,14 @@ export class AuthService {
         where: { email: loginRequestDto.email },
         relations: ['profile'],
       });
+
+      const isMatch = await bcrypt.compare(
+        loginRequestDto.password,
+        existedAccount.password,
+      );
+      if (!isMatch) {
+        throw new BadRequestException('Wrong password');
+      }
 
       const refreshToken = await this._generateRefreshToken(
         loginRequestDto.email,
@@ -75,11 +84,16 @@ export class AuthService {
           'Email existed: ' + registerRequestDto.email,
         );
       }
+
+      const salt = await bcrypt.genSalt();
+      const hashPassword = await bcrypt.hash(registerRequestDto.password, salt);
+
       const accountCreatedWithoutRefreshToken =
         await this._accountRepository.save({
           email: registerRequestDto.email,
           isVerified: !!registerRequestDto.email,
           refreshToken: '',
+          password: hashPassword,
         });
       await this._profileRepository.save({
         displayName:

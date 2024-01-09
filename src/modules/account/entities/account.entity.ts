@@ -7,6 +7,9 @@ export class AccountEntity extends BasedEntity {
   @Column()
   email: string;
 
+  @Column()
+  password: string;
+
   @Column({ nullable: true, type: 'longtext' })
   refreshToken?: string;
 
