@@ -10,7 +10,7 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '~/decorators/public.decorator';
 
 @Controller('product')
@@ -19,32 +19,37 @@ import { Public } from '~/decorators/public.decorator';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
-  }
+  // @Post()
+  // @ApiOperation({ summary: 'Cập nhật thông tin user đăng nhập' })
+  // create(@Body() createProductDto: CreateProductDto) {
+  //   return this.productService.create(createProductDto);
+  // }
 
   @Get('list')
+  @ApiOperation({ summary: 'Lấy danh sách sản phẩm' })
   findAll() {
     return this.productService.findAll();
   }
+
   @Get('sync')
+  @ApiOperation({ summary: 'Đồng bộ sản phẩm với fakestoreapi' })
   syncProduct() {
     return this.productService.syncProduct();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Lấy chi tiết sản phẩm' })
   findOne(@Param('id') id: string) {
     return this.productService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  //   return this.productService.update(+id, updateProductDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.productService.remove(+id);
+  // }
 }

@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtClaimDto } from '~/common/jwt-claim.dto';
 import { apiVersion } from '~/constants/version';
 import { AuthUser } from '~/decorators/auth-user.decorator';
@@ -17,24 +17,28 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @ApiOperation({ summary: 'Đăng nhập' })
   login(@Body() loginRequestDto: LoginRequestDto) {
     return this._authService.login(loginRequestDto);
   }
 
   @Post('refresh-token')
   @Public()
+  @ApiOperation({ summary: 'Lấy refresh token' })
   refreshToken(@Body() refreshTokenDto: RefreshTokenRequestDto) {
     return this._authService.refreshToken(refreshTokenDto);
   }
 
   @Post('logout')
   @Auth()
+  @ApiOperation({ summary: 'Đăng xuất' })
   async logout(@AuthUser() authUser: JwtClaimDto) {
     return await this._authService.logout(authUser);
   }
 
   @Post('register')
   @Public()
+  @ApiOperation({ summary: 'Đăng ký' })
   async register(@Body() registerRequestDto: RegisterRequestDto) {
     return await this._authService.register(registerRequestDto);
   }

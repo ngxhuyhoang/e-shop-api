@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtClaimDto } from '~/common/jwt-claim.dto';
 import { apiVersion } from '~/constants/version';
 import { AuthUser } from '~/decorators/auth-user.decorator';
@@ -16,7 +21,11 @@ export class UserController {
   @Get('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ description: 'Lấy thông tin người dùng hiện tại', type: ProfileDto })
+  @ApiOkResponse({
+    description: 'Lấy thông tin người dùng hiện tại',
+    type: ProfileDto,
+  })
+  @ApiOperation({ summary: 'Lấy thông tin user đăng nhập' })
   getCurrentUser(@AuthUser() authUser: JwtClaimDto) {
     return this._userService.getCurrentUser(authUser);
   }
@@ -24,8 +33,15 @@ export class UserController {
   @Patch('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ description: 'Cập nhật thông tin người dùng hiện tại', type: ProfileDto })
-  update(@AuthUser() authUser: JwtClaimDto, @Body() updateProfileDto: UpdateProfileDto) {
+  @ApiOkResponse({
+    description: 'Cập nhật thông tin người dùng hiện tại',
+    type: ProfileDto,
+  })
+  @ApiOperation({ summary: 'Cập nhật thông tin user đăng nhập' })
+  update(
+    @AuthUser() authUser: JwtClaimDto,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
     return this._userService.update(authUser, updateProfileDto);
   }
 }
