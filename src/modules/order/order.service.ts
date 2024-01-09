@@ -1,26 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { OrderEntity } from './entities/order.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrderService {
-  create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+  constructor(
+    @InjectRepository(OrderEntity)
+    private readonly _orderRepository: Repository<OrderEntity>,
+  ) {}
+
+  async create(createOrderDto: CreateOrderDto) {
+    try {
+      const order = await this._orderRepository.save(createOrderDto);
+      return order;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll() {
+    try {
+      const orders = await this._orderRepository.find();
+      return orders;
+    } catch (error) {
+      throw error;
+    }
   }
 
   findOne(id: number) {
     return `This action returns a #${id} order`;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: string, updateOrderDto: UpdateOrderDto) {
+    try {
+      const order = await this._orderRepository.save(updateOrderDto);
+      return order;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: string) {
+    try {
+      const order = await this._orderRepository.softDelete(id);
+      return order;
+    } catch (error) {
+      throw error;
+    }
   }
 }

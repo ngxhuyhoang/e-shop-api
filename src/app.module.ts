@@ -8,7 +8,6 @@ import { AccountModule } from './modules/account/account.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { ProductModule } from './modules/product/product.module';
 import { OrderModule } from './modules/order/order.module';
-import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -31,7 +30,6 @@ import { PaymentModule } from './modules/payment/payment.module';
     ProfileModule,
     ProductModule,
     OrderModule,
-    PaymentModule,
   ],
 })
 export class AppModule {}
