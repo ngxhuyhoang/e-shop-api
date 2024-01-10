@@ -15,5 +15,5 @@ export class UpdateProfileDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  bio?: string;
+  address?: string;
 }
