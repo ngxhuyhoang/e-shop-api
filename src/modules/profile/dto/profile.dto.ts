@@ -10,9 +10,6 @@ export class ProfileDto extends BasedDto {
   avatar?: string;
 
   @ApiProperty()
-  bio?: string;
-
-  @ApiProperty()
   email: string;
 
   constructor(user: ProfileEntity) {
@@ -21,7 +18,6 @@ export class ProfileDto extends BasedDto {
     this.id = user.id;
     this.displayName = user.displayName;
     this.avatar = user.avatar;
-    this.bio = user.bio;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
   }
