@@ -15,12 +15,6 @@ export class CreateOrderDto {
   email: string;
 
   @ApiProperty()
-  productQuantity: number;
-
-  @ApiProperty()
-  productImage: string;
-
-  @ApiProperty()
   totalPrice: number;
 
   @ApiProperty({ isArray: true, type: ProductOrderDto })
