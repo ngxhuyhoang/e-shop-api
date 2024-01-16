@@ -1,5 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BasedEntity } from '~/common/based.entity';
+import { AccountEntity } from '~/modules/account/entities/account.entity';
+import { ProductEntity } from '~/modules/product/entities/product.entity';
 
 @Entity({ name: 'orders' })
 export class OrderEntity extends BasedEntity {
@@ -15,15 +17,10 @@ export class OrderEntity extends BasedEntity {
   @Column()
   email: string;
 
-  @Column()
-  productId: string;
+  @OneToMany(() => ProductEntity, (product) => product.order)
+  products: ProductEntity[];
 
-  @Column()
-  productQuantity: number;
-
-  @Column()
-  productImage: string;
-
-  @Column()
-  totalPrice: number;
+  @ManyToOne(() => AccountEntity, (account) => account.orders)
+  @JoinColumn()
+  account: AccountEntity;
 }

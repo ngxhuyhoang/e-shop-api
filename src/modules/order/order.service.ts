@@ -4,17 +4,23 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
+import { OrderProductEntity } from './entities/order-product.entity';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(OrderEntity)
     private readonly _orderRepository: Repository<OrderEntity>,
+    @InjectRepository(OrderProductEntity)
+    private readonly _orderProductRepository: Repository<OrderProductEntity>,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
     try {
-      const order = await this._orderRepository.save(createOrderDto);
+      const order = await this._orderRepository.save({
+        ...createOrderDto,
+        orderProducts: this._orderProductRepository.create(),
+      });
       return order;
     } catch (error) {
       throw error;
