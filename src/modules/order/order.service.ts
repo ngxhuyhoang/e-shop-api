@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { OrderProductEntity } from './entities/order-product.entity';
+import { ProductEntity } from '../product/entities/product.entity';
+import { JwtClaimDto } from '~/common/jwt-claim.dto';
 
 @Injectable()
 export class OrderService {
@@ -13,15 +15,27 @@ export class OrderService {
     private readonly _orderRepository: Repository<OrderEntity>,
     @InjectRepository(OrderProductEntity)
     private readonly _orderProductRepository: Repository<OrderProductEntity>,
+    @InjectRepository(ProductEntity)
+    private readonly _productRepository: Repository<ProductEntity>,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto) {
+  async create(createOrderDto: CreateOrderDto, authUser: JwtClaimDto) {
     try {
-      const order = await this._orderRepository.save({
-        ...createOrderDto,
-        orderProducts: this._orderProductRepository.create(),
+      const productOrder = await createOrderDto.productOrder.map((p) => {
+        return {
+          name: p.name,
+          price: p.price,
+          image: p.image,
+          quantity: p.quantity,
+          totalPrice: p.totalPrice,
+          productId: p.productId,
+        };
       });
-      return order;
+      return await this._orderRepository.save({
+        ...createOrderDto,
+        productOrder: productOrder,
+        accountId: authUser.accountId,
+      });
     } catch (error) {
       throw error;
     }

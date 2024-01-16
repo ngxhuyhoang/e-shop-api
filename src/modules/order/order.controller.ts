@@ -11,6 +11,8 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthUser } from '~/decorators/auth-user.decorator';
+import { JwtClaimDto } from '~/common/jwt-claim.dto';
 
 @Controller('order')
 @ApiTags('Đơn hàng')
@@ -19,8 +21,8 @@ export class OrderController {
 
   @Post('create')
   @ApiOperation({ summary: 'Tạo đơn hàng' })
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  create(@Body() createOrderDto: CreateOrderDto, @AuthUser() authUser: JwtClaimDto) {
+    return this.orderService.create(createOrderDto, authUser: JwtClaimDto);
   }
 
   @Get('list')
