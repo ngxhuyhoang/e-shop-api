@@ -21,8 +21,11 @@ export class OrderController {
 
   @Post('create')
   @ApiOperation({ summary: 'Tạo đơn hàng' })
-  create(@Body() createOrderDto: CreateOrderDto, @AuthUser() authUser: JwtClaimDto) {
-    return this.orderService.create(createOrderDto, authUser: JwtClaimDto);
+  create(
+    @Body() createOrderDto: CreateOrderDto,
+    @AuthUser() authUser: JwtClaimDto,
+  ) {
+    return this.orderService.create(createOrderDto, authUser);
   }
 
   @Get('list')
